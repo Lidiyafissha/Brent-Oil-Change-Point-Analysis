@@ -1,20 +1,22 @@
 import pandas as pd
-import os
+from pathlib import Path
 
-# Load Brent oil price data
-script_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(os.path.dirname(script_dir))
-data_path = os.path.join(project_root, "data", "raw", "BrentOilPrices.csv")
+def load_price_data(filepath: str) -> pd.DataFrame:
+    path = Path(filepath)
 
-df = pd.read_csv(data_path)
+    if not path.exists():
+        raise FileNotFoundError(f"Price data not found at {filepath}")
 
-# Convert date column - use mixed format parsing
-df["Date"] = pd.to_datetime(df["Date"], format="mixed", dayfirst=False)
+    df = pd.read_csv(path)
 
-# Sort by time
-df = df.sort_values("Date").reset_index(drop=True)
+    required_cols = {"Date", "Price"}
+    if not required_cols.issubset(df.columns):
+        raise ValueError(f"Dataset must contain columns: {required_cols}")
 
-# Basic checks
-print(df.head())
-print(df.info())
-print(df.isna().sum())
+    df["Date"] = pd.to_datetime(df["Date"], format="%d-%b-%y", errors="coerce")
+
+    if df["Date"].isnull().any():
+        raise ValueError("Date parsing failed for some rows.")
+
+    df = df.sort_values("Date").reset_index(drop=True)
+    return df
