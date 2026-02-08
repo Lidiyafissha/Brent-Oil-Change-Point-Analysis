@@ -1,0 +1,28 @@
+import pandas as pd
+import os
+
+events = [
+    ("1990-08-02", "Gulf War invasion of Kuwait", "Geopolitical Conflict"),
+    ("1997-07-02", "Asian Financial Crisis", "Economic Shock"),
+    ("2001-09-11", "9/11 Attacks in the United States", "Geopolitical Shock"),
+    ("2003-03-20", "US-led invasion of Iraq", "Geopolitical Conflict"),
+    ("2008-09-15", "Global Financial Crisis", "Economic Shock"),
+    ("2010-12-17", "Arab Spring begins", "Geopolitical Conflict"),
+    ("2014-11-27", "OPEC decides not to cut production", "OPEC Policy"),
+    ("2016-11-30", "OPEC production cut agreement", "OPEC Policy"),
+    ("2020-03-11", "COVID-19 declared a pandemic", "Global Health Shock"),
+    ("2020-04-20", "Oil prices crash due to demand collapse", "Economic Shock"),
+    ("2022-02-24", "Russia invades Ukraine", "Geopolitical Conflict"),
+    ("2022-03-08", "Western sanctions on Russian oil", "Sanctions"),
+]
+
+df_events = pd.DataFrame(events, columns=["date", "event", "category"])
+df_events["date"] = pd.to_datetime(df_events["date"])
+
+# Get project root directory (2 levels up from src/data/)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(script_dir))
+output_path = os.path.join(project_root, "data", "processed", "events.csv")
+
+df_events.to_csv(output_path, index=False)
+print("events.csv saved successfully.")
