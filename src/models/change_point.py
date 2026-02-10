@@ -1,5 +1,7 @@
 import numpy as np
 import pymc as pm
+import pytensor
+pytensor.config.cxx = ""
 
 
 def fit_mean_change_point_model(returns, draws=10, tune=10):
