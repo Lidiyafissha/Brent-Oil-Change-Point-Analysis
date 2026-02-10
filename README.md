@@ -1,198 +1,271 @@
 # Brent-Oil-Change-Point-Analysis
-🛢️ Task 1: Laying the Foundation for Analysis
+📊 Brent Oil Price Analysis
 
-Change Point Analysis and Statistical Modeling of Brent Oil Prices
+Change Point Detection & Interactive Dashboard
 
 📌 Project Overview
 
-This project is conducted for Birhan Energies, a consultancy firm providing data-driven insights to stakeholders in the energy sector.
-The goal of Task 1 is to establish a strong analytical foundation for understanding how major geopolitical, economic, and policy events influence Brent oil prices over time.
+This project analyzes historical Brent crude oil prices to understand how major geopolitical, economic, and policy events align with structural changes in oil price behavior.
 
-Oil prices are highly volatile and sensitive to global events. By carefully examining historical price data and aligning it with key events, this task prepares the ground for Bayesian Change Point Analysis, which will be implemented in later stages of the project.
+The work is organized into three progressive tasks:
 
-🎯 Objectives of Task 1
+Task 1 – Exploratory Data Analysis (EDA) and statistical foundations
 
-The main objectives of Task 1 are to:
+Task 2 – Bayesian Change Point Modeling and insight generation
 
-Define a clear data analysis workflow
+Task 3 – Interactive dashboard for communicating results
 
-Understand the statistical properties of the Brent oil price time series
+The goal is insight, not prediction, with all findings communicated alongside uncertainty and limitations.
 
-Compile a structured dataset of major global events
+🧭 Project Structure
+project-root/
+│
+├── data/
+│   ├── raw/                # Raw Brent price data
+│   ├── processed/          # Cleaned & transformed data
+│   └── events/             # Structured geopolitical & economic events
+│
+├── notebooks/
+│   ├── 01_eda.ipynb        # Task 1: EDA and diagnostics
+│   └── 02_change_point.ipynb
+│
+├── src/
+│   ├── data/
+│   │   └── load_data.py
+│   ├── eda/
+│   │   └── eda.py
+│   ├── models/
+│   │   └── change_point.py
+│   └── utils/
+│       └── validation.py
+│
+├── dashboard/
+│   ├── backend/            # Flask API (Task 3)
+│   └── frontend/           # React app (Task 3)
+│
+├── data/results/
+│   └── change_points.json
+│
+└── README.md
 
-Clearly document assumptions and limitations
+🧪 Task 1: Laying the Foundation (EDA & Diagnostics)
+🎯 Objective
 
-Identify appropriate communication channels for stakeholders
+Establish a statistically sound understanding of Brent oil price behavior and prepare the data for change point modeling.
 
-Prepare the analytical groundwork for Bayesian change point modeling
+🔹 Step 1: Data Loading & Preparation
 
-📊 Dataset Description
-Brent Oil Price Data
+Load historical Brent oil prices
 
-Source: Historical Brent oil prices
+Convert Date to datetime format
 
-Time Range: May 20, 1987 – September 30, 2022
+Sort chronologically to preserve time order
 
-Frequency: Daily
+Perform basic validation:
 
-Fields:
+Missing values
 
-Date: Date of observation (day-month-year)
+Data type consistency
 
-Price: Brent oil price in USD per barrel
+No interpolation or forward filling is applied to avoid artificial patterns
 
-Event Data
+🔹 Step 2: Exploratory Data Analysis (EDA)
 
-A manually curated dataset of major events that may influence oil prices, including:
+Plot raw price series to observe:
+
+Long-term trends
+
+Sharp spikes and collapses
+
+Crisis periods
+
+Compute log returns:
+
+log(price_t) − log(price_{t−1})
+
+
+This stabilizes variance and improves suitability for statistical modeling.
+
+Visualize log returns to identify volatility clustering
+
+🔹 Step 3: Time Series Diagnostics
+
+Apply Augmented Dickey-Fuller (ADF) test
+
+Raw prices: non-stationary
+
+Log returns: stationary
+
+Plot rolling mean and rolling standard deviation
+
+Reveals changing statistical behavior over time
+
+Motivates regime-based modeling
+
+🔹 Step 4: Event Dataset Compilation
+
+A structured CSV of major oil-relevant events is created, including:
 
 Geopolitical conflicts
 
 OPEC policy decisions
 
-Economic and global shocks
+Economic and global health shocks
 
-The event dataset contains:
+These events are aligned visually with the price series for interpretive analysis (not causal claims).
 
-date: Approximate start or announcement date
+📌 Key Takeaways (Task 1)
 
-event: Short description
+Brent prices are non-stationary
 
-category: Type of event (e.g., OPEC Policy, Economic Shock)
+Log returns are stationary and volatile
 
-🧭 Data Analysis Workflow
+Evidence strongly suggests structural regime shifts
 
-The analysis follows these steps:
+Data is well-prepared for Bayesian change point modeling
 
-Data Loading and Cleaning
+🔍 Task 2: Bayesian Change Point Modeling
+🎯 Objective
 
-Convert date fields to datetime format
+Detect and quantify structural breaks in Brent oil prices using Bayesian inference.
 
-Sort observations chronologically
+🔹 Model Overview (Plain Explanation)
 
-Check for missing values
+A Bayesian change point model assumes:
 
-Exploratory Data Analysis (EDA)
+The data behaves differently before and after a certain unknown point in time
 
-Visualize raw Brent oil prices to identify trends and shocks
+That change point is treated as a random variable, not a fixed date
 
-Compute log returns to stabilize variance
+The model estimates:
 
-Observe volatility clustering
+The most likely date of change
 
-Time Series Diagnostics
+Average behavior before and after the change
 
-Conduct stationarity testing using the Augmented Dickey-Fuller (ADF) test
+Uncertainty around all estimates
 
-Examine rolling mean and rolling standard deviation
+🔹 Model Components
 
-Use findings to motivate probabilistic modeling
+Switch point (τ)
+Discrete uniform prior across all time indices
 
-Event Data Integration
+Before / After parameters (μ₁, μ₂)
+Separate means for each regime
 
-Align global events with price movements
+Likelihood
+Normal distribution with mean selected using a switch function
 
-Use event timing for interpretation only
+Inference
+MCMC sampling using PyMC
 
-Preparation for Change Point Modeling
+🔹 Model Evaluation
 
-Identify periods where structural breaks are likely
+Convergence checked via:
 
-Avoid causal claims at this stage
+r_hat ≈ 1.0
 
-📐 Assumptions
+Trace plots
 
-The analysis is based on the following assumptions:
+Posterior distribution of τ examined:
 
-Brent oil prices reflect public information available to market participants
+Sharp peak → high certainty
 
-Large structural breaks correspond to meaningful changes in market regimes
+Parameter posteriors used to:
 
-Log returns are approximately stationary and suitable for statistical modeling
+Quantify average price changes
 
-Event dates represent approximate timing; markets may react before or after events
+Make probabilistic statements
 
-⚠️ Limitations and Causality Disclaimer
-Correlation vs. Causation (Critical Distinction)
+🔹 Event Association
 
-Statistical correlation in time means a price change occurs around the same time as an event
+Detected change points are compared with known events to form hypotheses, such as:
 
-Causal impact requires proof that the event directly caused the price change
+“Following the OPEC production cut in 2016, the model detects a structural shift, with the average price increasing from X to Y.”
 
-This analysis:
+No causal claims are made.
 
-✅ Identifies temporal alignment
+📌 Outputs (Task 2)
 
-❌ Does not prove causality
+Posterior distributions
 
-Proving causation would require:
+Detected change points
 
-Control variables (e.g., GDP, inflation, exchange rates)
+Quantified impacts with uncertainty
 
-Counterfactual or causal inference methods
+Saved results in change_points.json
 
-Natural experiments or instrumental variables
+📊 Task 3: Interactive Dashboard Development
+🎯 Objective
 
-Additional limitations include:
+Translate analytical results into accessible, interactive insights for stakeholders.
 
-Omission of macroeconomic and financial variables
+🔧 Backend (Flask)
 
-Overlapping and interacting global events
+Provides APIs for:
 
-Sensitivity to modeling assumptions
+Historical price data
 
-📢 Communication Channels
+Change point results
 
-Results from this project are designed to be communicated through multiple channels:
+Event metadata
 
-Audience	Channel	Format
-Policymakers	Policy brief	PDF with executive summary
-Investors & Analysts	Dashboard	Interactive web application
-Energy Companies	Technical report	Detailed PDF
-Technical Reviewers	Jupyter Notebook	Reproducible analysis
-General Stakeholders	Presentation	Slide deck with visuals
+Example endpoints:
 
-All communications emphasize uncertainty and probabilistic interpretation.
+/api/prices
 
-📁 Project Structure (Relevant to Task 1)
-brent-oil-change-point-analysis/
-├── data/
-│   ├── raw/
-│   │   └── brent_prices.csv
-│   └── processed/
-│       └── events.csv
-├── notebooks/
-│   └── 01_task1_eda_and_model_foundation.ipynb
-├── reports/
-│   └── task1_foundation.pdf
-├── requirements.txt
-└── README.md
+/api/change-points
 
-📓 Notebook Description
+/api/events
 
-01_task1_eda_and_model_foundation.ipynb includes:
+🎨 Frontend (React)
 
-Data loading and cleaning
+Interactive features include:
 
 Time series visualization
 
-Log return computation
+Event highlighting
 
-Stationarity testing (ADF)
+Date range filters
 
-Rolling statistics
+Drill-down exploration
 
-Event alignment visualization
+Responsive design (desktop & mobile)
 
-This notebook demonstrates readiness for Bayesian change point modeling without making causal claims.
+Recommended libraries:
 
-✅ Deliverables Summary
+Recharts
 
-✔️ Defined data analysis workflow
+React Chart.js
 
-✔️ Structured event dataset (CSV)
+D3.js (optional)
 
-✔️ Documented assumptions and limitations
+📌 Dashboard Insights
 
-✔️ Clear communication strategy
+Visual alignment of price shifts and events
 
-✔️ Reproducible Jupyter notebook
+Volatility indicators
+
+Regime comparison
+
+Intuitive storytelling for non-technical users
+
+⚠️ Limitations
+
+Change point detection is probabilistic
+
+Event alignment is interpretive, not causal
+
+Model focuses on price behavior only (no external regressors yet)
+
+🚀 Future Work
+
+Incorporate macroeconomic variables (GDP, inflation, FX)
+
+Explore:
+
+Markov-switching models
+
+VAR models
+
+Extend dashboard with forecasting views
