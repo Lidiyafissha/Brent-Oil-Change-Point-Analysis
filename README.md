@@ -2,7 +2,7 @@
 
 Short description: This project detects structural breaks in Brent crude oil prices using Bayesian change-point modeling, enriches analysis with macroeconomic context (GDP, inflation, FX), and delivers insights through a Flask API + React dashboard with explainability views.
 
-[![CI](https://github.com/Lidiyafissha/workflows/actions/workflows/ci.yml/badge.svg)](https://github.com/Lidiyafissha/workflows/actions/workflows/ci.yml)
+[![ci2](https://github.com/Lidiyafissha/Brent-Oil-Change-Point-Analysis/actions/workflows/ci2.yml/badge.svg)](https://github.com/Lidiyafissha/Brent-Oil-Change-Point-Analysis/actions/workflows/ci2.yml)
 
 ## Business Problem
 Energy markets are highly sensitive to geopolitical shocks, monetary policy, and macroeconomic cycles.  
